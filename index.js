@@ -2,8 +2,8 @@
 // where your node app starts
 
 // init project
-var express = require('express');
-var app = express();
+let express = require('express');
+let app = express();
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -20,12 +20,30 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
-});
+app.get("/api/", (req, res) => {
+    res.json({ unix: new Date().getTime(), utc: `${new Date().toUTCString()}`})
+})
+app.get("/api/:date?", (req, res) => {
+  let currentDate = new Date(req.params.date);
 
+  if (Number(req.params.date))
+  {
+    res.json({
+      unix: parseInt(req.params.date), utc: `${new Date(parseInt(req.params.date)).toUTCString()}`
+    })
+  }
+  else if (currentDate == "Invalid Date")
+  {
+    res.json(
+      { error : "Invalid Date" }
+    )
+  }
+  else
+  {
+    res.json({ unix: currentDate.getTime(), utc: `${currentDate.toUTCString()}`})
 
-
+  }
+})
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
